@@ -3,10 +3,56 @@ using Xunit;
 
 namespace GradeBook.Tests
 {
+    public delegate string WriteLogDelegate(string logMessage);
+
     public class TypeTests
     {
         const string bookName1 = "Book 1";
         const string bookName2 = "Book 2";
+
+        int count = 0;
+
+        [Fact]
+        public void WriteLogDelegateCanPointToMethod()
+        {
+            WriteLogDelegate log = ReturnMessage;
+            log += ReturnMessage;
+            log += IncrementCount;
+
+            var result = log("Hello!");
+            Assert.Equal(3, count);
+        }
+
+        string IncrementCount(string message)
+        {
+            count++;
+            return message.ToLower();
+        }
+        
+        string ReturnMessage(string message)
+        {
+            count++;
+            return message;
+        }
+
+        [Fact]
+        public void ValueTypesAlsoPassByValue()
+        {
+            var x = GetInt();
+            SetInt(ref x);
+
+            Assert.Equal(42, x);
+        }
+
+        private void SetInt(ref Int32 z)
+        {
+            z = 42;
+        }
+
+        private int GetInt()
+        {
+            return 3;
+        }
 
         [Fact]
         public void CSharpCanPassByReference()
